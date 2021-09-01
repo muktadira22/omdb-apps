@@ -1,133 +1,182 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import ImageList from '@material-ui/core/ImageList';
-import ImageListItem from '@material-ui/core/ImageListItem';
-import ImageListItemBar from '@material-ui/core/ImageListItemBar';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import IconButton from '@material-ui/core/IconButton';
-import * as Icon from '@material-ui/icons'
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import "./index.css"
-import { Typography } from '@material-ui/core';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import ImageList from "@material-ui/core/ImageList";
+import ImageListItem from "@material-ui/core/ImageListItem";
+import ImageListItemBar from "@material-ui/core/ImageListItemBar";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import IconButton from "@material-ui/core/IconButton";
+import * as Icon from "@material-ui/icons";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import "./index.css";
+import { Typography } from "@material-ui/core";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import Button from "@material-ui/core/Button";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { pink } from "@material-ui/core/colors";
+import FavoriteButton from "../Button/FavoriteButton";
+import MovieContext from "../../stores/movie/context";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    overflow: 'hidden',
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    overflow: "hidden",
     backgroundColor: theme.palette.background.paper,
   },
   imageList: {
-    [theme.breakpoints.down('sm')]: {
-      width: "100%"
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
     },
-    [theme.breakpoints.up('md')]: {
-      width: 500
+    [theme.breakpoints.up("md")]: {
+      width: 500,
     },
     height: 450,
   },
   icon: {
-    color: 'rgba(255, 255, 255, 0.54)',
+    color: "rgba(255, 255, 255, 0.54)",
   },
   modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   imageModal: {
-    width: "50%"
+    width: "50%",
   },
   fullList: {
-    width: 'auto',
+    width: "auto",
     textAlign: "center",
     padding: theme.spacing(5, 2, 0),
   },
+  margin: {
+    margin: theme.spacing(1),
+  },
 }));
 
-const ListMovie = ({ list }) => {
+const ListMovie = ({ list, myList }) => {
   const classes = useStyles();
+
+  const { addToList, removeToList } = React.useContext(MovieContext);
 
   const [state, setState] = React.useState({
     isOpen: false,
+    data: {},
   });
 
   // For Open / Close Drawer
-  const toggleDrawer = (open) => (event) => {
-    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-
-    setState({ ...state, isOpen: open });
+  const openDetail = (data) => {
+    setState({ ...state, isOpen: true, data });
   };
 
   // Lazy Image Component
-  const LazyImage = ({ image }) => (
+  const LazyImage = ({ data }) => (
     <LazyLoadImage
-      alt={image.alt}
+      alt={data.Title}
       effect="blur"
-      src={image.src} />
+      src={data.Poster}
+      onClick={() => openDetail(data)}
+    />
   );
 
-  // Drawer Component Detail
-  const DrawerDetail = () => (
-    <div
-      className={classes.fullList}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-    >
-      <img className={classes.imageModal} src="https://m.media-amazon.com/images/M/MV5BMTE0YWFmOTMtYTU2ZS00ZTIxLWE3OTEtYTNiYzBkZjViZThiXkEyXkFqcGdeQXVyODMzMzQ4OTI@._V1_SX300.jpg" alt="test gambar" />
-      <Typography variant="h6" gutterisOpen>
-        Captain Marvel
-      </Typography>
-    </div>
-  );
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setState({ ...state, isOpen: open });
+  };
 
+  const checkIsFavorited = (imdbID) => {
+    const find = myList.find((x) => x.imdbID === imdbID);
+    return find ? true : false;
+  };
+
+  const favoriteClick = (favorite, data) => {
+    if (favorite) removeToList(data);
+    else addToList(data);
+  };
   return (
     <div className={classes.root}>
-      {list.length > 0 && <>
-        <ImageList rowHeight={180} className={classes.imageList}>
-          <ImageListItem key="Subheader" cols={2} style={{ height: 'auto' }}>
-            <ListSubheader component="div">
-              Search Result : {"Marvel"}
-            </ListSubheader>
-          </ImageListItem>
-          {list.map((item, key) => (
-            <ImageListItem onClick={toggleDrawer(true)} key={key}>
-              <LazyImage
-                image={{ src: item.Poster, alt: item.Title }}
-              />
-              <ImageListItemBar
-                title={item.Title}
-                subtitle={<span>{item.Type} / {item.Year}</span>}
-                actionIcon={
-                  <IconButton aria-label={`info about ${"Captain Marvel"}`} className={classes.icon}>
-                    <Icon.FavoriteBorder />
-                  </IconButton>
-                }
-              />
+      {list.length > 0 && (
+        <>
+          <ImageList rowHeight={180} className={classes.imageList}>
+            <ImageListItem key="Subheader" cols={2} style={{ height: "auto" }}>
+              <ListSubheader component="div">
+                Search Result : {"Marvel"}
+              </ListSubheader>
             </ImageListItem>
-          ))}
+            {list.map((item, key) => (
+              <ImageListItem key={key}>
+                <LazyImage data={item} />
+                <ImageListItemBar
+                  title={item.Title}
+                  subtitle={
+                    <span>
+                      {item.Type} / {item.Year}
+                    </span>
+                  }
+                  actionIcon={
+                    <IconButton
+                      aria-label={`info about ${item.Title}`}
+                      className={classes.icon}
+                      onClick={() => favoriteClick(item.isFavorited, item)}
+                    >
+                      {item.isFavorited ? (
+                        <Icon.Favorite />
+                      ) : (
+                        <Icon.FavoriteBorder />
+                      )}
+                    </IconButton>
+                  }
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
 
-        </ImageList>
-
-        <SwipeableDrawer
-          anchor="bottom"
-          open={state.isOpen}
-          onClose={toggleDrawer(false)}
-          onOpen={toggleDrawer(true)}
-          disableSwipeToOpen={true}
-          className="movie-drawer"
-        >
-          <DrawerDetail />
-        </SwipeableDrawer>
-      </>}
+          <SwipeableDrawer
+            anchor="bottom"
+            open={state.isOpen}
+            onClose={toggleDrawer(false)}
+            onOpen={toggleDrawer(true)}
+            disableSwipeToOpen={true}
+            className="movie-drawer"
+          >
+            <div
+              className={classes.fullList}
+              role="presentation"
+              onClick={toggleDrawer}
+              onKeyDown={toggleDrawer}
+            >
+              <img
+                className={classes.imageModal}
+                src={state.data.Poster}
+                alt={state.data.Title}
+              />
+              <Typography variant="h6" gutterisOpen>
+                {state.data.Title}
+              </Typography>
+              <Typography variant="subtitle1" gutterBottom>
+                {state.data.Type} / {state.data.Year}
+              </Typography>
+              <FavoriteButton data={state.data} />
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                className={classes.margin}
+              >
+                <Icon.Launch />
+              </Button>
+            </div>
+          </SwipeableDrawer>
+        </>
+      )}
     </div>
+  );
+};
 
-  )
-}
-
-export default ListMovie
+export default ListMovie;

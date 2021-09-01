@@ -38,7 +38,9 @@ const SearchMovie = () => {
   const [name, setName] = React.useState("");
   const classes = useStyles();
 
-  const { listMovie, getMovieByName } = React.useContext(MovieContext);
+  const { listMovie, getMovieByName, myList } = React.useContext(MovieContext);
+
+  console.log("listMovie", myList);
 
   const searchMovie = (e) => {
     if (e.key === "Enter") {
@@ -63,10 +65,10 @@ const SearchMovie = () => {
       />
       <Grid container diretion={"row"}>
         <Grid item>
-          <ListMovie list={listMovie.results || []} />
+          <ListMovie list={listMovie.results || []} myList={myList} />
         </Grid>
 
-        {Array.isArray(listMovie.results) && listMovie.results.length > 0 ? (
+        {/* {Array.isArray(listMovie.results) && listMovie.results.length > 0 ? (
           <Grid className={classes.pagination}>
             <Pagination
               count={listMovie.totalPages}
@@ -78,7 +80,7 @@ const SearchMovie = () => {
           </Grid>
         ) : (
           ""
-        )}
+        )} */}
       </Grid>
     </div>
   );
