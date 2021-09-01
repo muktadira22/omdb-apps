@@ -29,6 +29,7 @@ const MovieProvider = ({ children }) => {
       data: [],
       total: 0
     },
+    myList: []
   })
 
   const getMovieByName = (name, page = 1) => {
@@ -61,6 +62,28 @@ const MovieProvider = ({ children }) => {
     }
   }
 
+  const addToList = (data) => {
+    setState((prev) => ({
+      ...prev,
+      myList: [...prev.myList, data]
+    }))
+  }
+
+  const removeToList = (data) => {
+    let id = data.imdbID
+    let dataArray = state.myList
+    for (let i = 0; i < dataArray.length; i++) {
+      if (dataArray[i].imdbID === id) {
+        dataArray.splice(i, 1)
+        break;
+      }
+    }
+    setState((prev) => ({
+      ...prev,
+      myList: dataArray
+    }))
+  }
+
   // React.useEffect(() => {
   //   // Get Upcoming Movie
 
@@ -68,7 +91,9 @@ const MovieProvider = ({ children }) => {
   return (
     <MovieContext.Provider value={{
       state,
-      getMovieByName: getMovieByName
+      getMovieByName: getMovieByName,
+      addToList,
+      removeToList,
     }}>
       {children}
       <Snackbar open={open.isOpen} autoHideDuration={6000} onClose={handleClose}>
