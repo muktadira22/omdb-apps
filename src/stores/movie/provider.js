@@ -14,6 +14,11 @@ const MovieProvider = ({ children }) => {
     isOpen: false,
     message: "",
   })
+
+  const [listMovie, setListMovie] = React.useState({})
+
+  const [myList, setMyList] = React.useState([])
+
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -24,13 +29,6 @@ const MovieProvider = ({ children }) => {
       isOpen: false
     }))
   };
-  const [state, setState] = React.useState({
-    upcoming: {
-      data: [],
-      total: 0
-    },
-    myList: []
-  })
 
   const getMovieByName = (name, page = 1) => {
     if (name !== "" || name !== null) {
@@ -39,58 +37,45 @@ const MovieProvider = ({ children }) => {
           s: name,
           page
         },
-        successCb: (res) => {
-          let data = res.data
-          if (data.Response === "True") {
-            setState((prev) => ({
-              ...prev,
-              upcoming: {
-                ...prev.upcoming,
-                data: data.Search,
-                total: data.totalResults
-              }
-            }))
-          } else {
-            setOpen((prev) => ({
-              ...prev,
-              isOpen: true,
-              message: data.Error
-            }))
-          }
+        successCb: (data) => {
+          setListMovie(data)
+          setOpen((prev) => ({
+            ...prev,
+            isOpen: false,
+          }))
         },
+        failedCb: (err) => {
+          setListMovie({})
+          setOpen((prev) => ({
+            ...prev,
+            isOpen: true,
+            message: err.message
+          }))
+        }
       })
     }
   }
 
   const addToList = (data) => {
-    setState((prev) => ({
-      ...prev,
-      myList: [...prev.myList, data]
-    }))
+    setMyList([...myList, data])
   }
 
   const removeToList = (data) => {
     let id = data.imdbID
-    let dataArray = state.myList
+    let dataArray = myList
     for (let i = 0; i < dataArray.length; i++) {
       if (dataArray[i].imdbID === id) {
         dataArray.splice(i, 1)
         break;
       }
     }
-    setState((prev) => ({
-      ...prev,
-      myList: dataArray
-    }))
+    setMyList(dataArray)
   }
 
-  // React.useEffect(() => {
-  //   // Get Upcoming Movie
-
-  // }, [])
   return (
     <MovieContext.Provider value={{
-      state,
+      listMovie,
+      myList,
       getMovieByName: getMovieByName,
       addToList,
       removeToList,

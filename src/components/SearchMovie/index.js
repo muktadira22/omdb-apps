@@ -1,17 +1,9 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import MovieContext from "../../stores/movie/context";
 import Pagination from "@material-ui/lab/Pagination";
-import Paginate from "../../utils/paginate";
 import ListMovie from "../ListMovie";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,29 +36,18 @@ const useStyles = makeStyles((theme) => ({
 
 const SearchMovie = () => {
   const [name, setName] = React.useState("");
-  const [paginate, setPaginate] = React.useState({});
-  const [page, setPage] = React.useState(1);
   const classes = useStyles();
 
-  const movieContext = React.useContext(MovieContext);
-  const upcomingMovie = movieContext.state.upcoming.data;
-  const upcomingMovieTotal = movieContext.state.upcoming.total;
+  const { listMovie, getMovieByName } = React.useContext(MovieContext);
 
-  React.useEffect(() => {
-    setPaginate((prevState) => ({
-      ...prevState,
-      ...Paginate(upcomingMovieTotal, page, 10, 10),
-    }));
-  }, [movieContext]);
   const searchMovie = (e) => {
     if (e.key === "Enter") {
-      movieContext.getMovieByName(name);
+      getMovieByName(name);
     }
   };
 
   const handleChangePagination = (e, value) => {
-    movieContext.getMovieByName(name, value);
-    setPage(value);
+    getMovieByName(name, value);
   };
 
   return (
@@ -82,14 +63,14 @@ const SearchMovie = () => {
       />
       <Grid container diretion={"row"}>
         <Grid item>
-          <ListMovie list={upcomingMovie} />
+          <ListMovie list={listMovie.results || []} />
         </Grid>
 
-        {upcomingMovieTotal !== 0 ? (
+        {Array.isArray(listMovie.results) && listMovie.results.length > 0 ? (
           <Grid className={classes.pagination}>
             <Pagination
-              count={paginate.totalPages++}
-              page={paginate.currentPage}
+              count={listMovie.totalPages}
+              page={listMovie.page}
               onChange={handleChangePagination}
               size="small"
               shape="rounded"
