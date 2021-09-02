@@ -44,7 +44,6 @@ const DetailPage = () => {
     setValue(index);
   };
   React.useEffect(() => {
-    console.log("res");
 
     getMovieById(id, function (res) {
       setState(res);
@@ -73,13 +72,6 @@ const DetailPage = () => {
   }
 
   const favoritedClick = () => {
-    console.log({
-      Title: state.Title,
-      Type: state.Type,
-      imdbID: state.imdbID,
-      Poster: state.Poster,
-      Year: state.Year,
-    });
     if (state.isFavorited) {
       removeToList({
         Title: state.Title,

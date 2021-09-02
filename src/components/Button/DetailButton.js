@@ -15,7 +15,6 @@ const DetailButton = ({ data }) => {
   const classes = useStyles();
 
   const openDetail = (data) => {
-    console.log(data);
     history.push(`/${data.imdbID}`);
   };
   return (

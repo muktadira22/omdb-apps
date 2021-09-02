@@ -44,7 +44,12 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   imageModal: {
-    width: "50%",
+    [theme.breakpoints.down("sm")]: {
+      width: "50%",
+    },
+    [theme.breakpoints.up("md")]: {
+      width: 200,
+    },
   },
   fullList: {
     width: "auto",
@@ -156,7 +161,7 @@ const MyListPage = () => {
                   src={state.data.Poster}
                   alt={state.data.Title}
                 />
-                <Typography variant="h6" gutterisOpen>
+                <Typography variant="h6">
                   {state.data.Title}
                 </Typography>
                 <Typography variant="subtitle1" gutterBottom>

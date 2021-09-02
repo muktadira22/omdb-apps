@@ -89,7 +89,6 @@ const MovieProvider = ({ children }) => {
         successCb: (data) => {
           data.isFavorited = false;
           let find = myList.find((element) => element.imdbID === id);
-          console.log(find);
           if (typeof find !== "undefined") {
             data.isFavorited = true;
           }
@@ -144,7 +143,6 @@ const MovieProvider = ({ children }) => {
 
   // Function for adding to mylist
   const addToList = (data) => {
-    // console.log(data);
     setMyList([...myList, { ...data, isFavorited: true }]);
   };
 

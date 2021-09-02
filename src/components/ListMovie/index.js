@@ -150,7 +150,7 @@ const ListMovie = ({ list, myList, name }) => {
                 src={state.data.Poster}
                 alt={state.data.Title}
               />
-              <Typography variant="h6" gutterisOpen>
+              <Typography variant="h6">
                 {state.data.Title}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>

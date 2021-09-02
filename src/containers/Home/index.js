@@ -41,8 +41,6 @@ const HomeContainer = () => {
 
   const { listMovie, getMovieByName, myList } = React.useContext(MovieContext);
 
-  console.log("listMovie", myList);
-
   const searchMovie = (e) => {
     if (e.key === "Enter") {
       getMovieByName(name);
