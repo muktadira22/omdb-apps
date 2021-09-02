@@ -1,16 +1,13 @@
-import React from 'react'
-import MovieProvider from './movie/provider'
-import ThemeProvider from './theme/provider'
+import React from "react";
+import MovieProvider from "./movie/provider";
+import UiProvider from "./ui/provider";
 
 const IndexStore = ({ children }) => {
-
   return (
-    <ThemeProvider>
-      <MovieProvider>
-        {children}
-      </MovieProvider>
-    </ThemeProvider>
-  )
-}
+    <UiProvider>
+      <MovieProvider>{children}</MovieProvider>
+    </UiProvider>
+  );
+};
 
-export default IndexStore
+export default IndexStore;

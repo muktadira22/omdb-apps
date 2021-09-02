@@ -21,14 +21,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const FavoriteButton = ({ data }) => {
+const FavoriteButton = ({ data, onClose = undefined }) => {
   const classes = useStyles();
 
   const { addToList, removeToList } = React.useContext(MovieContext);
 
   const favoriteClick = () => {
-    if (data.isFavorited) removeToList(data);
-    else addToList(data);
+    if (data.isFavorited) {
+      removeToList(data);
+      if (typeof onClose !== "undefined") onClose();
+    } else addToList(data);
   };
 
   return (

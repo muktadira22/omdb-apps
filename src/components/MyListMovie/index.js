@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import ImageList from "@material-ui/core/ImageList";
 import ImageListItem from "@material-ui/core/ImageListItem";
 import ImageListItemBar from "@material-ui/core/ImageListItemBar";
-import ListSubheader from "@material-ui/core/ListSubheader";
 import IconButton from "@material-ui/core/IconButton";
 import * as Icon from "@material-ui/icons";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
@@ -53,10 +52,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ListMovie = ({ list, myList, name }) => {
+const MyListMovie = () => {
   const classes = useStyles();
 
-  const { addToList, removeToList } = React.useContext(MovieContext);
+  const { removeToList, myList } = React.useContext(MovieContext);
 
   const [state, setState] = React.useState({
     isOpen: false,
@@ -89,21 +88,20 @@ const ListMovie = ({ list, myList, name }) => {
     setState({ ...state, isOpen: open });
   };
 
+  const checkIsFavorited = (imdbID) => {
+    const find = myList.find((x) => x.imdbID === imdbID);
+    return find ? true : false;
+  };
+
   const favoriteClick = (favorite, data) => {
     if (favorite) removeToList(data);
-    else addToList(data);
   };
   return (
     <div className={classes.root}>
-      {list.length > 0 && (
+      {myList.length > 0 && (
         <>
           <ImageList rowHeight={180} className={classes.imageList}>
-            <ImageListItem key="Subheader" cols={2} style={{ height: "auto" }}>
-              <ListSubheader component="div">
-                Search Result : {name}
-              </ListSubheader>
-            </ImageListItem>
-            {list.map((item, key) => (
+            {myList.map((item, key) => (
               <ImageListItem key={key}>
                 <LazyImage data={item} />
                 <ImageListItemBar
@@ -166,4 +164,4 @@ const ListMovie = ({ list, myList, name }) => {
   );
 };
 
-export default ListMovie;
+export default MyListMovie;
